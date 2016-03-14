@@ -4,5 +4,7 @@
 #define BUF_SIZE 1024
 #define UNIX_SOCKET_PATH "/var/run/fcsrv.sock"
 
+#define PORT 3903
+
 #define DUMPFILE "/tmp/fcsrv.data"
 #define DUMP_TIMEGAP 3600 // 3600 sec once

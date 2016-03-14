@@ -28,7 +28,7 @@ void dump_load(){
         return;
     }
     int linesize = 1024*256; 
-    char *line = calloc(linesize,sizeof(char)); //100mb for one line
+    char *line = malloc(linesize * sizeof(char)); //100mb for one line
     char idfa[1024]="",vals[102400]="";
     char *saveptr=NULL;
     long logcnt = 0;

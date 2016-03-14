@@ -16,7 +16,7 @@ void* thread_listen(void* args){
     }
 
     listen_addr.sin_family = AF_INET;
-    listen_addr.sin_port = htons(udp_port);
+    listen_addr.sin_port = htons(PORT);
     listen_addr.sin_addr.s_addr = INADDR_ANY;
 
     if(bind(sd, (struct sockaddr *)&listen_addr, sizeof(listen_addr)) < 0) {
@@ -28,9 +28,7 @@ void* thread_listen(void* args){
     while(1){
         memset(buf,0,BUF_SIZE);
         if(recvfrom(sd, buf, BUF_SIZE, 0, (struct sockaddr *)&from_addr, &sin_size) < 0)continue;
-        pthread_mutex_lock(&mutex_jobs_lock);
-        insert_jobs(buf);
-        pthread_mutex_unlock(&mutex_jobs_lock);
+        insert_jobs_with_lock(buf);
     }
     close(sd);
 }

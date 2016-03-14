@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
+#include "define.c"
 
 int main(){
     int sock;
@@ -13,10 +14,10 @@ int main(){
     sock = socket(AF_INET, SOCK_DGRAM, 0);
     
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(3903);
+    addr.sin_port = htons(PORT);
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     
-    int i;for(i=0;i<1000000;i++){
+    int i;for(i=0;i<100*10000;i++){
        char s[32]="";
        sprintf(s,"%d",i);
        sendto(sock, s, strlen(s), 0, (struct sockaddr *)&addr, sizeof(addr));

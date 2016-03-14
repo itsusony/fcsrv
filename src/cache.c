@@ -1,12 +1,14 @@
 JD** jobs; //raw datas
 unsigned long long int jobs_len=0;
 pthread_mutex_t mutex_jobs_lock = PTHREAD_MUTEX_INITIALIZER; // 同時書き込み＆読み取りどちらもロックが必要です。
-void init_jobs(){jobs = malloc(OKU*sizeof(JD*));jobs_len=0;}
-void insert_jobs(const char* idfa){
+void init_jobs(){jobs = malloc(OKU * sizeof(JD*));jobs_len=0;}
+void insert_jobs_with_lock(const char* idfa){
+    pthread_mutex_lock(&mutex_jobs_lock);
     JD *jd = malloc(sizeof(JD));
     jd->id = strdup(idfa);
     jd->time = (long long int)time(NULL);
     jobs[jobs_len++]=jd;
+    pthread_mutex_unlock(&mutex_jobs_lock);
 }
 void free_job(JD* jd){free(jd->id);free(jd);}
 
@@ -21,7 +23,7 @@ void insert_jobsum(JD* jd){
 
     struct tm *tst = localtime(&(jd->time));
     HJDATE *jdt = malloc(sizeof(HJDATE));
-    jdt->ymd = malloc(8*sizeof(char));
+    jdt->ymd = malloc(8 * sizeof(char));
     sprintf(jdt->ymd,"%04d%02d%02d",tst->tm_year+1900,tst->tm_mon+1,tst->tm_mday);
     if(!exist_jds){
         HJDS *newjds = malloc(sizeof(HJDS));
@@ -31,7 +33,7 @@ void insert_jobsum(JD* jd){
         HASH_ADD_STR(jobsum,id,newjds);
     }else{
         HJDATE *find_jdt=NULL;
-        HASH_FIND_STR(exist_jds->times,jdt->ymd,find_jdt);
+        if(exist_jds->times)HASH_FIND_STR(exist_jds->times,jdt->ymd,find_jdt);
         if(!find_jdt){
             // todo check MAX_DAYS
             HASH_ADD_STR(exist_jds->times,ymd,jdt);
